@@ -38,14 +38,14 @@ instance Default MUCHistoryReq where
 
 -- |Join the specified MUC or change your nickname in the already joined one. The resource part of the `Jid` sets the desired nickname.
 joinMUC :: Jid -> Maybe MUCHistoryReq -> Session -> IO (Either XmppFailure ())
-joinMUC jid mhr = sendPresence (maybe id (\hr x -> x { presencePayload = [Element "x" [("xmlns", [ContentText "http://jabber.org/protocol/muc"])] [
+joinMUC jid mhr = sendPresence ((presTo presence jid) { presencePayload = [Element "x" [("xmlns", [ContentText "http://jabber.org/protocol/muc"])] $ maybe [] (\hr -> [
 		NodeElement $ Element "history" (
 			(elementify "maxchars" show $ mhrSeconds hr) ++
 			(elementify "maxstanzas" show $ mhrSeconds hr) ++
 			(elementify "seconds" show $ mhrSeconds hr) ++
 			(elementify "since" toDateTime $ mhrSince hr)
-		) []]
-	] } ) mhr $ (presTo presence jid))
+		) []]) mhr
+	] } )
 	where elementify name show content = fmap (\s -> ("seconds", [ContentText $ T.pack $ show s])) $ maybeToList content
 
 -- |Send a broadcast message. `Jid` must be bare.
