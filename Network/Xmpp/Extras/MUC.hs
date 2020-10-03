@@ -40,8 +40,8 @@ instance Default MUCHistoryReq where
 joinMUC :: Jid -> Maybe MUCHistoryReq -> Session -> IO (Either XmppFailure ())
 joinMUC jid mhr = sendPresence ((presTo presence jid) { presencePayload = [Element "x" [("xmlns", [ContentText "http://jabber.org/protocol/muc"])] $ maybe [] (\hr -> [
 		NodeElement $ Element "history" (
-			(elementify "maxchars" show $ mhrSeconds hr) ++
-			(elementify "maxstanzas" show $ mhrSeconds hr) ++
+			(elementify "maxchars" show $ mhrMaxChars hr) ++
+			(elementify "maxstanzas" show $ mhrMaxStanzas hr) ++
 			(elementify "seconds" show $ mhrSeconds hr) ++
 			(elementify "since" toDateTime $ mhrSince hr)
 		) []]) mhr
