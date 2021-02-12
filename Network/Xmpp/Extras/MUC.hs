@@ -3,11 +3,12 @@
 -- Portability :  I'm too young to die
 -- XEP-0045: Multi-User Chat
 
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, RecordWildCards #-}
 
 module Network.Xmpp.Extras.MUC
 	( MUCHistoryReq(..)
 	, joinMUC
+	, joinMUCResult
 	, sendMUC
 	) where
 
@@ -47,6 +48,21 @@ joinMUC jid mhr = sendPresence ((presTo presence jid) { presencePayload = [Eleme
 		) []]) mhr
 	] } )
 	where elementify name show content = fmap (\s -> ("seconds", [ContentText $ T.pack $ show s])) $ maybeToList content
+
+-- |Like `joinMUC`, but waits for the server reply.
+joinMUCResult :: Jid -> Maybe MUCHistoryReq -> Session -> IO (Either StanzaError PresenceType)
+joinMUCResult jid mhr sess = do
+	joinMUC jid mhr sess
+	waitForResult jid sess
+
+waitForResult :: Jid -> Session -> IO (Either StanzaError PresenceType)
+waitForResult jid sess = do
+	pres <- pullPresence sess
+	case pres of
+		Left p@(PresenceError {..})	| presenceErrorFrom == Just jid -> pure $ Left presenceErrorStanzaError
+						| otherwise -> waitForResult jid sess
+		Right p@(Presence{..})		| presenceFrom == Just jid -> pure $ Right presenceType
+						| otherwise -> waitForResult jid sess
 
 -- |Send a broadcast message. `Jid` must be bare.
 sendMUC :: Jid -> Text -> Session -> IO (Either XmppFailure ())
