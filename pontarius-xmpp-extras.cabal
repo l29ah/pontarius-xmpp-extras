@@ -1,5 +1,5 @@
 name:                pontarius-xmpp-extras
-version:             0.1.0.5
+version:             0.1.0.6
 synopsis:            XEPs implementation on top of pontarius-xmpp
 -- description:
 license:             OtherLicense
@@ -18,7 +18,7 @@ Source-repository head
 Source-repository this
   type:              git
   location:          https://github.com/l29ah/pontarius-xmpp-extras.git
-  tag:               0.1.0.5
+  tag:               0.1.0.6
 
 library
   exposed-modules:
