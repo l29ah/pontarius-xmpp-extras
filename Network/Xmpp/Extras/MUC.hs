@@ -14,7 +14,8 @@ module Network.Xmpp.Extras.MUC
 
 import Data.Default
 import Data.Maybe
-import Data.Text as T
+import Data.Text (Text)
+import qualified Data.Text as T
 import Data.Time
 import Data.XML.Types
 import Network.Xmpp.Extras.DateTime
