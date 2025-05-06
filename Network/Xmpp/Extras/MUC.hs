@@ -12,7 +12,7 @@ module Network.Xmpp.Extras.MUC
 	, sendMUC
 	) where
 
-import Data.Default
+import Data.Default.Class
 import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
